@@ -23,15 +23,15 @@ func (s CommonServerSuite) Options() []server.Option {
 		server.WithMetaHandler(transmeta.ServerHTTP2Handler),
 	}
 
-	// 注册到consul
+	// 服务注册到consul
 	r, err := registryconsul.NewConsulRegister(s.RegistryAddr)
 	if err != nil {
 		klog.Fatal(err)
 	}
 	opts = append(opts, server.WithRegistry(r))
 
+	// 可观测性
 	_ = provider.NewOpenTelemetryProvider(provider.WithSdkTracerProvider(mtl.TracerProvider), provider.WithEnableMetrics(false))
-
 	opts = append(opts,
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 			ServiceName: s.CurrentServiceName,
